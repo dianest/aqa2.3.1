@@ -18,7 +18,7 @@ public class CardDeliveryTest {
 
     @Test
     public void happyPath() {
-        open("http://localhost:9000/");
+        open("http://localhost:9999/");
         SelenideElement form = $(By.tagName("FORM"));
         form.$("[data-test-id=city] input").setValue("Санкт-Петербург");
         form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
@@ -29,8 +29,21 @@ public class CardDeliveryTest {
         form.$("[data-test-id=agreement]").click();
         form.$("[class=button__content]").click();
 
-        SelenideElement notification = $("[data-test-id=notification]");
+        SelenideElement notification = $("[data-test-id=success-notification]");
         notification.waitUntil(Condition.visible, 15000).
-               shouldHave(text("Встреча успешно забронирована на " + date));
+               shouldHave(text("Встреча успешно запланирована на " + date));
+
+        form.$("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
+        date = LocalDate.now().plusDays(4).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        form.$("[data-test-id=date] input").setValue(date);
+        form.$("[class=button__content]").click();
+
+        SelenideElement replanNotification = $("[data-test-id=replan-notification]");
+        replanNotification.waitUntil(Condition.visible, 15000);
+        replanNotification.$("[class=button__content]").click();
+
+        SelenideElement newNotification = $("[data-test-id=success-notification]");
+        newNotification.waitUntil(Condition.visible, 15000).
+                shouldHave(text("Встреча успешно запланирована на " + date));
     }
 }
