@@ -9,8 +9,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class FormData {
     private String city;
-    private LocalDate meetDate;
     private String name;
     private String phoneNumber;
-    private boolean agreementChecked;
 }
